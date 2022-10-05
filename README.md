@@ -105,6 +105,6 @@ at [`geoffrey.castillo@univie.ac.at`](mailto:geoffrey.castillo@univie.ac.at).
 
 ## Licence
 
-`ios.js` is licensed under [The MIT License (MIT)](https://opensource.org/licenses/MIT).
+`ios.js` is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
 Copyright (c) 2022 Geoffrey Castillo
