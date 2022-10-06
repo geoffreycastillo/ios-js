@@ -96,7 +96,7 @@ e.g. in oTree).
 
 ## Citation
 
-If you use `ios.js`, please cite our paper: _[coming soon!]_
+If you use `ios.js`, please cite our paper: [Beranek and Castillo (2022) Continuous Inclusion of Other in the Self](https://geoffreycastillo.com/pdf/Beranek,Castillo-Continuous-Inclusion-of-Other-in-the-Self.pdf)
 
 ## Bugs? Suggestions?
 
