@@ -1,7 +1,7 @@
 # ios.js
 
-A JavaScript implementation of the Inclusion of Other in the Self scale, introduced by Aron et al. (1992).
-On top of the original IOS—which we call the Pictorial IOS—`ios.js` also offers the Continuous IOS, and a middle-ground, the Step-choice IOS.
+A continuous implementation of the Inclusion of Other in the Self scale.
+We also offer the original IOS scale and a middle-ground, the Step-choice IOS scale.
 
 ## Demo
 
