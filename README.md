@@ -62,7 +62,7 @@ Proportion distance: <span id="continuous-ios-distance"></span>
 
 ## Examples
 
-For the Step-Choice IOS:
+For the Step-Choice IOS scale:
 
 ```
 # html
@@ -74,7 +74,7 @@ const iosStepChoice = new Ios({
 });
 ```
 
-For the original, Pictorial IOS:
+For the original IOS scale:
 
 ```
 # html
