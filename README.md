@@ -60,8 +60,6 @@ Proportion distance: <span id="continuous-ios-distance"></span>
 </script>
 ```
 
-See the [wiki](https://github.com/geoffreycastillo/bingo-blower-js/wiki/Advice-for-oTree) for specific oTree advice.
-
 ## Examples
 
 For the Step-Choice IOS:
