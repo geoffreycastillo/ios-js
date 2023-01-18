@@ -89,8 +89,7 @@ const iosPictorial = new Ios({
 
 ## Documentation
 
-See the [wiki](https://github.com/geoffreycastillo/bingo-blower-js/wiki) for the API documentation and for some specific advice when using in an experiment (
-e.g. in oTree).
+See the [wiki](https://github.com/geoffreycastillo/ios-js/wiki) for the API documentation and for some specific Qualtrics advice.
 
 ## Citation
 
