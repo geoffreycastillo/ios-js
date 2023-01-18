@@ -59,6 +59,7 @@ Proportion distance: <span id="continuous-ios-distance"></span>
     );
 </script>
 ```
+See the wiki for instructions on [how to use `ios.js` with Qualtrics](https://github.com/geoffreycastillo/ios-js/wiki/Qualtrics).
 
 ## Examples
 
