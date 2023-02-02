@@ -690,9 +690,10 @@ function Ios({
                 button.id = id;
                 button.innerHTML = innerHTML
                 button.type = 'button';
-                const buttonClassArray = buttonsClass.split(/\s+/);
-                button.classList.add(...buttonClassArray);
-
+                if (buttonsClass !== '') {
+                    const buttonClassArray = buttonsClass.split(/\s+/);
+                    button.classList.add(...buttonClassArray);
+                }
                 return button
             }
 
