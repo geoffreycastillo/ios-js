@@ -26,7 +26,7 @@ Then, download `ios.js` from the [releases](https://github.com/geoffreycastillo/
 or use a CDN such as [jsDelivr](https://www.jsdelivr.com/):
 
 ```
-<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo@0.1.0/ios-js/ios.min.js
+<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo/ios-js@0.1.0/ios.min.js
 "></script>
 ```
 
@@ -41,7 +41,7 @@ Proportion distance: <span id="continuous-ios-distance"></span>
 
 # js
 <script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.17/dist/interact.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo@0.1.0/ios-js/ios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo/ios-js@0.1.0/ios.min.js"></script>
 <script>
     const iosContinuous = new Ios({
         el: 'ios-continuous',
