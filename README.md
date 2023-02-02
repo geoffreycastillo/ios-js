@@ -10,7 +10,12 @@ https://geoffreycastillo.com/ios-js-demo/
 ## Installation
 
 `ios.js` uses [`interact.js`](https://github.com/taye/interact.js/).
-Refer to their page for instructions on how to install.
+It is tested with version `1.10.17`.
+Refer to their page for instructions on how to install; for example, with a CDN:
+
+```
+<script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.17/dist/interact.min.js"></script>
+```
 
 Then, download `ios.js` from the [releases](https://github.com/geoffreycastillo/ios-js/releases) and include it:
 
@@ -21,7 +26,7 @@ Then, download `ios.js` from the [releases](https://github.com/geoffreycastillo/
 or use a CDN such as [jsDelivr](https://www.jsdelivr.com/):
 
 ```
-<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo/ios-js/ios.min.js
+<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo@0.1.0/ios-js/ios.min.js
 "></script>
 ```
 
@@ -36,7 +41,7 @@ Proportion distance: <span id="continuous-ios-distance"></span>
 
 # js
 <script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.17/dist/interact.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo/ios-js/ios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo@0.1.0/ios-js/ios.min.js"></script>
 <script>
     const iosContinuous = new Ios({
         el: 'ios-continuous',
@@ -71,7 +76,7 @@ For the Step-Choice IOS scale:
 # js
 const iosStepChoice = new Ios({
     el: 'ios-step-choice',
-    numberCircles: 7
+    type: 'step-choice'
 });
 ```
 
@@ -83,8 +88,7 @@ For the original IOS scale:
 # js
 const iosPictorial = new Ios({
     el: 'ios-pictorial',
-    numberCircles: 7,
-    manyCircles: true,
+    type: 'original'
 });
 ```
 

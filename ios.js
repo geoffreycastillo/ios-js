@@ -1,26 +1,26 @@
 /**
  * Instantiate the IOS widget
  * @class
- * @param {Object} options - options
+ * @param {Object} options
  * @param {string} options.el - Element where IOS will be inserted
- * @param {number|'continuous'} [options.numberCircles = 'continuous'] - Choose between Continuous IOS or number of circles between (2 and 20) for Pictorial and Step-Choice IOS
- * @param {boolean} [options.manyCircles = false] - Whether to use the Pictorial IOS
+ * @param {'continuous'|'step-choice'|'original'} [options.type = 'continuous'] - Choose between Continuous, Step-choice, or original IOS
+ * @param {number} [options.numberCirles = 7] - Number of circles (original and Step-choice only)
  * @param {number} [options.circleDiameter = 100] - Initial diameter of the circles
  * @param {string} [options.you = 'You'] - String for the left circle
  * @param {string} [options.other = 'Other'] - String for the right circle
- * @param {string} [options.buttonsClass = ''] - Additional class to pass to the buttons: circles if using Pictorial IOS, arrows if using Step-Choice IOS
- * @param {('column' | 'row')} [options.direction = 'column'] - Arrangement of the buttons, if using Pictorial IOS
+ * @param {string} [options.buttonsClass = ''] - Additional class to pass to the buttons: circles if using original IOS, arrows if using Step-choice IOS
+ * @param {('column' | 'row')} [options.direction = 'column'] - Arrangement of the buttons, if using original IOS
  * @param {number} [options.leftTextWidth = 40] - Size reserved for string of left circle, needs to be adjusted manually until the initial pair of circles has no overlap
  * @param {number} [options.rightTextWidth = 40] - Size reserved for string of right circle, needs to be adjusted manually until the initial pair of circles has no overlap
  * @property {number} distance - Distance in pixels between the circles
  * @property {number} proportionOverlap - Proportion of overlap, between 0 (no overlap) and 1 (full overlap)
  * @property {number} proportionDistance - Proportion of distance, between 0 (no overlap) and 1 (full overlap)
- * @property {number} currentCircle - Current circle pair, between 1 and numberCircles (Pictorial and Step-Choice IOS only)
+ * @property {number} currentCircle - Current circle pair, between 1 and numberCircles (original and Step-choice only)
  */
 function Ios({
                  el,
-                 numberCircles = 'continuous',
-                 manyCircles = false,
+                 type = 'continuous',
+                 numberCircles = 7,
                  circleDiameter = 100,
                  you = 'You',
                  other = 'Other',
@@ -215,7 +215,7 @@ function Ios({
                     </div>`
     let inner = ''
 
-    if (manyCircles) {
+    if (type === 'original') {
         const singleCircle = function (value) {
             return `
                     <button type="button" name="ios" value="${value}" class="ios-button ${buttonsClass}">
@@ -329,7 +329,7 @@ function Ios({
     this.proportionDistance = initialDistanceOverlap.proportionDistance;
 
 
-    if (typeof numberCircles == 'number') {
+    if (type === 'step-choice' || type === 'original') {
 
         if (numberCircles < 2 || numberCircles > 20) {
             throw new Error('numberCircles needs to be between 2 and 20 (both included)')
@@ -598,7 +598,7 @@ function Ios({
 
         const data = DATA[numberCircles - 1]
 
-        if (manyCircles) {
+        if (type === 'original') {
 
             let distanceOverlapPictures = [];
 
@@ -634,7 +634,7 @@ function Ios({
                     }, false
                 )
             }
-        } else {
+        } else if (type === 'step-choice') {
 
             /**
              * Take the next or the previous pair of circles, retrieve the values from DATA,
@@ -718,10 +718,9 @@ function Ios({
             nextButton.addEventListener('mousedown', nextCircle);
             previousButton.addEventListener('mousedown', previousCircle)
         }
-
-
-    } else if (numberCircles === 'continuous') {
-
+    }
+    
+    if (type === 'continuous') {
         /**
          * Given the distance between the circles, finds the radius such that
          * - the total area is constant
@@ -807,7 +806,9 @@ function Ios({
             lockAxis: 'x',
             onmove: onMove.bind(this),
         });
-    } else {
-        throw new Error("numberCircles needs to be 'continuous' or a number between 2 and 20. ")
+    } 
+
+    if (type !== 'continuous' && type !== 'step-choice' && type !== 'original') {
+        throw new Error("numberCircles needs to be 'continuous', 'step-choice', or 'original'")
     }
 }
