@@ -66,9 +66,9 @@ Proportion distance: <span id="continuous-ios-distance"></span>
 ```
 See the wiki for instructions on [how to use `ios.js` with Qualtrics](https://github.com/geoffreycastillo/ios-js/wiki/Qualtrics).
 
-## Examples
+## Other examples
 
-For the Step-Choice IOS scale:
+For the Step-Choice IOS scale with 10 pairs of cirles:
 
 ```
 # html
@@ -76,7 +76,8 @@ For the Step-Choice IOS scale:
 # js
 const iosStepChoice = new Ios({
     el: 'ios-step-choice',
-    type: 'step-choice'
+    type: 'step-choice',
+    numberCircles: 10
 });
 ```
 
