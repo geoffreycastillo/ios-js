@@ -26,9 +26,11 @@ Then, download `ios.js` from the [releases](https://github.com/geoffreycastillo/
 or use a CDN such as [jsDelivr](https://www.jsdelivr.com/):
 
 ```
-<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo/ios-js@0.1.0/ios.min.js
+<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo/ios-js@0.1.1/ios.min.js
 "></script>
 ```
+
+Replace `0.1.1` with the release you want.
 
 ## Quick start
 
@@ -64,7 +66,6 @@ Proportion distance: <span id="continuous-ios-distance"></span>
     );
 </script>
 ```
-See the wiki for instructions on [how to use `ios.js` with Qualtrics](https://github.com/geoffreycastillo/ios-js/wiki/Qualtrics).
 
 ## Other examples
 
@@ -92,6 +93,12 @@ const iosPictorial = new Ios({
     type: 'original'
 });
 ```
+
+# Qualtrics? oTree?
+
+See the wiki for instructions on [how to use `ios.js` with Qualtrics](https://github.com/geoffreycastillo/ios-js/wiki/Qualtrics).
+
+For oTree, we have a [separate demo app](https://github.com/geoffreycastillo/ios_js_otree_demo).
 
 ## Documentation
 
