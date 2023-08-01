@@ -114,7 +114,7 @@ function Ios({
      * @returns {number} - the x coordinate of the center
      */
     function findXPositionAtCenter(element) {
-        const {top, left, width, height} = element.getBoundingClientRect();
+        const { top, left, width, height } = element.getBoundingClientRect();
         return left + width / 2
     }
 
@@ -159,7 +159,7 @@ function Ios({
     }
 
 
-    /** Sear for class name in DOM
+    /** Search for class name in DOM
      * https://stackoverflow.com/a/62209631/3248229
      * @private
      * @param {string} className
@@ -720,7 +720,7 @@ function Ios({
             previousButton.addEventListener('mousedown', previousCircle)
         }
     }
-    
+
     if (type === 'continuous') {
         /**
          * Given the distance between the circles, finds the radius such that
@@ -807,7 +807,7 @@ function Ios({
             lockAxis: 'x',
             onmove: onMove.bind(this),
         });
-    } 
+    }
 
     if (type !== 'continuous' && type !== 'step-choice' && type !== 'original') {
         throw new Error("numberCircles needs to be 'continuous', 'step-choice', or 'original'")

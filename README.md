@@ -94,7 +94,7 @@ const iosPictorial = new Ios({
 });
 ```
 
-# Qualtrics? oTree?
+## Qualtrics? oTree?
 
 See the wiki for instructions on [how to use `ios.js` with Qualtrics](https://github.com/geoffreycastillo/ios-js/wiki/Qualtrics).
 
