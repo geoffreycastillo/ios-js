@@ -26,8 +26,7 @@ Then, download `ios.js` from the [releases](https://github.com/geoffreycastillo/
 or use a CDN such as [jsDelivr](https://www.jsdelivr.com/):
 
 ```
-<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo/ios-js@0.1.1/ios.min.js
-"></script>
+<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo/ios-js@0.1.1/ios.min.js"></script>
 ```
 
 Replace `0.1.1` with the release you want.
