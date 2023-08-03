@@ -26,10 +26,17 @@ Then, download `ios.js` from the [releases](https://github.com/geoffreycastillo/
 or use a CDN such as [jsDelivr](https://www.jsdelivr.com/):
 
 ```
+<script src="https://cdn.jsdelivr.net/gh/geoffreycastillo/ios-js/ios.min.js"></script>
+```
+
+When you use `ios.js` in a real experiment, you should specify a version number by replacing `ios-js` with `ios-js@x.x.x` in the link, where `x.x.x` corresponds to one of the version numbers in the [releases](https://github.com/geoffreycastillo/ios-js/releases). 
+For example, to use `0.2.0`:
+
+```
 <script src="https://cdn.jsdelivr.net/gh/geoffreycastillo/ios-js@0.2.0/ios.min.js"></script>
 ```
 
-Replace `0.2.0` with the release you want.
+Otherwise, you will use the last version and run the risk that I push a new version while your experiment is running, which could break something.
 
 ## Quick start
 
