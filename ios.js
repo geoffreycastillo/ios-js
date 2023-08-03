@@ -410,7 +410,7 @@ function Ios({
             numberCirclesList.forEach((circle, i) => {
                 // find each pair of circle in the DOM and arrange them according to DATA
                 const iosID = 'ios-' + circle.toString()
-                const circleDiv = document.getElementById(iosID)
+                const circleDiv = wrapper.querySelector(`[id="${iosID}"]`)
                 leftGroup = circleDiv.querySelector('.left-group')
                 rightGroup = circleDiv.querySelector('.right-group')
                 leftCircle = circleDiv.querySelector('.left-circle')
