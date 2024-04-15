@@ -6,7 +6,9 @@
  * @param {'continuous'|'step-choice'|'original'} [options.type = 'continuous'] - Choose between Continuous, Step-choice, or original IOS
  * @param {number} [options.numberCirles = 7] - Number of circles (original and Step-choice only)
  * @param {number} [options.circleDiameter = 100] - Initial diameter of the circles
- * @param {boolean} [options.unbalanced = false] - If true, the circles will be unbalanced (original and Step-choice only)
+ * @param {('unbalanced'|'ios11'|'ios11-fixed-diameter')} [options.extended = false] - Whether to include intermediate circles in the first half (for 'unbalanced') or in the first and last third (for 'ios11') (original and Step-choice only). If 'ios11-fixed-diameter', the circles will have a fixed diameter, and the number of circles has to be 11.
+ * @param {boolean} [options.unbalanced = false] - If true, there are twice as many circles in the first half (original and Step-choice only)
+ * @param {boolean} [options.ios11 = false] - If true, there are twice as many circles in the first and last third, inspired by IOS11 (original and Step-choice only)
  * @param {string} [options.you = 'You'] - String for the left circle
  * @param {string} [options.other = 'Other'] - String for the right circle
  * @param {string} [options.buttonsClass = ''] - Additional class to pass to the buttons: circles if using original IOS, arrows if using Step-choice IOS
@@ -23,7 +25,7 @@ function Ios({
     type = 'continuous',
     numberCircles = 7,
     circleDiameter = 100,
-    unbalanced = false,
+    extended = false,
     you = 'You',
     other = 'Other',
     buttonsClass = '',
@@ -204,6 +206,54 @@ function Ios({
                 `
     }
 
+    
+    function createListFromNumberCircles(numberCircles) {
+        let numberCirclesList = []
+        for (let i = 1; i <= numberCircles; i++) {
+            numberCirclesList.push(i)
+        }
+        return numberCirclesList
+    }
+
+    const unbalancedCirclesToRemove = {
+        3: [4],
+        5: [6, 8],
+        7: [8, 10, 12],
+        9: [10, 12, 14, 16],
+        11: [12, 14, 16, 18, 20],
+        13: [14, 16, 18, 20, 22, 24],
+    }
+
+    const ios11CirclesToRemove = {
+        4: [4],
+        7: [6, 8],
+        10: [8, 10, 12],
+        13: [10, 12, 14, 16]
+    }
+
+    if (!['continuous', 'step-choice', 'original'].includes(type)) {
+        throw new Error("numberCircles needs to be 'continuous', 'step-choice', or 'original'")
+    }
+
+    if (type == 'continuous' && extended) {
+        throw new Error("extended can only be true for 'step-choice' or 'original'")
+    }
+
+    if ((type == 'step-choice' || type == 'original') && (numberCircles < 2 || numberCircles > 20)) {
+        throw new Error('numberCircles needs to be between 2 and 20 (both included)')
+    }
+
+    if(extended == 'unbalanced' && !(numberCircles in unbalancedCirclesToRemove)) {
+        throw new Error('numberCircles needs to be 3, 5, 7, 9, 11, or 13 when unbalanced is true')
+    }
+
+    if(extended == 'ios11' && !(numberCircles in ios11CirclesToRemove)) {
+        throw new Error('numberCircles needs to be 4, 7, 10, or 13 when ios11 is true')
+    }
+
+    if(extended == 'ios11-fixed-diameter' && numberCircles != 7) {
+        throw new Error('numberCircles needs to be 7 when ios11-fixed-diameter is true')
+    }
 
     const wrapper = document.getElementById(el);
     const iosGroup = `
@@ -217,34 +267,49 @@ function Ios({
                     </div>`
     let inner = ''
 
-    let numberCirclesList = []
-    let numberCirclesListUnbalanced = [];
+    let numberCirclesOriginal = numberCircles;
+    let numberCirclesList = [];
+    let numberCirclesListOriginal = [];
+    let numberCirclesListOriginalWithHalves = [];
 
     if (type === 'original' || type === 'step-choice') {
-        for (let i = 1; i <= numberCircles; i++) {
-            numberCirclesList.push(i)
+
+        if (extended) {
+            numberCircles = numberCircles * 2;
         }
 
-        if (unbalanced) {
-            let length = numberCirclesList.length;
+        numberCirclesList = createListFromNumberCircles(numberCircles);
 
+        if (extended) {
+            // example: the IOS7 has 7 circles, to create an extended version we consider the IOS14
+            // however the 14th circle is halfway between the last circle of IOS7 and the full overlap circle
+            // so we also need to remove it
+            numberCirclesList.pop();
+            numberCirclesListOriginal = createListFromNumberCircles(numberCirclesOriginal);
+
+            const length = numberCirclesListOriginal.length;
             for (let i = 0; i < length; i++) {
-                numberCirclesListUnbalanced.push(numberCirclesList[i]);
-                if (i < length / 2 - 1) {
-                    let newNumber = (numberCirclesList[i] + numberCirclesList[i + 1]) / 2;
-                    numberCirclesListUnbalanced.push(newNumber);
-                }
+                numberCirclesListOriginalWithHalves.push(numberCirclesList[i]);
+                numberCirclesListOriginalWithHalves.push(numberCirclesList[i] + 0.5);
             }
+            numberCirclesListOriginalWithHalves.pop();
 
-            numberCirclesList = numberCirclesListUnbalanced;
+            // remove the circles pairs specified in one of the two lists
+            let removeList = [];
+            if (extended === 'unbalanced') {
+                removeList = unbalancedCirclesToRemove;
+            } else if (extended === 'ios11' || extended === 'ios11-fixed-diameter') {
+                removeList = ios11CirclesToRemove;
+            }
+            numberCirclesList = numberCirclesList.filter((_, index) => !removeList[numberCirclesOriginal].includes(index + 1));
+            numberCirclesListOriginalWithHalves = numberCirclesListOriginalWithHalves.filter((_, index) => !removeList[numberCirclesOriginal].includes(index + 1));
         }
-
     }
 
     if (type === 'original') {
-        const singleCircle = function (value) {
+        const singleCircle = function (value, recodedValue = null) {
             return `
-                    <button type="button" name="ios" value="${value}" class="ios-button ${buttonsClass}">
+                    <button type="button" name="ios" value="${value}" class="ios-button ${buttonsClass}" ${extended ? 'value-recoded=' + recodedValue : ''}>
                         <div class="circles" id="${'ios-' + value.toString()}">
                             <div>
                                 ${iosGroup}
@@ -253,8 +318,12 @@ function Ios({
                     </button>`
         }
 
-        for (const circle of numberCirclesList) {
-            inner += singleCircle(circle)
+        for (let i = 0; i < numberCirclesList.length; i++) {
+            if (extended) {
+                inner += singleCircle(numberCirclesList[i], numberCirclesListOriginalWithHalves[i])
+            } else {
+                inner += singleCircle(numberCirclesList[i])
+            }
         }
 
     } else {
@@ -279,7 +348,6 @@ function Ios({
     fixedStyle.innerHTML =
         `.ios {
     display: flex;
-    flex-direction: ${direction};
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
@@ -298,7 +366,11 @@ function Ios({
 }`
 
     variableStyle.innerHTML =
-        `#${el} .circles {
+        `#${el} .ios {
+            flex-direction: ${direction};
+        }
+        
+#${el} .circles {
     height: ${String(endDiameter + 2 * borderWidth) + 'px'};
     width: ${String(2 * endDiameter + 2 * borderWidth + leftTextMinWidth + rightTextMinWidth + 2 * textMargin) + 'px'};
     display: flex;
@@ -357,16 +429,7 @@ function Ios({
 
     if (type === 'step-choice' || type === 'original') {
 
-        if (numberCircles < 2 || numberCircles > 20) {
-            throw new Error('numberCircles needs to be between 2 and 20 (both included)')
-        }
-
-        let DATA = [];
-        if (unbalanced) {
-            DATA = [{}, [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1080, "distance": 647 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1061, "distance": 704 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1049, "distance": 742 }, { "diameter": 1095, "distance": 606 }, { "diameter": 1140, "distance": 498 }, { "diameter": 1183, "distance": 406 }, { "diameter": 1265, "distance": 250 }, { "diameter": 1342, "distance": 117 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1041, "distance": 769 }, { "diameter": 1080, "distance": 647 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1354, "distance": 97 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1035, "distance": 790 }, { "diameter": 1069, "distance": 678 }, { "diameter": 1102, "distance": 590 }, { "diameter": 1134, "distance": 513 }, { "diameter": 1165, "distance": 444 }, { "diameter": 1195, "distance": 382 }, { "diameter": 1254, "distance": 271 }, { "diameter": 1309, "distance": 172 }, { "diameter": 1363, "distance": 82 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1031, "distance": 807 }, { "diameter": 1061, "distance": 704 }, { "diameter": 1090, "distance": 621 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1146, "distance": 486 }, { "diameter": 1173, "distance": 428 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1275, "distance": 232 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1369, "distance": 72 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1027, "distance": 820 }, { "diameter": 1054, "distance": 724 }, { "diameter": 1080, "distance": 647 }, { "diameter": 1106, "distance": 580 }, { "diameter": 1131, "distance": 521 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1178, "distance": 416 }, { "diameter": 1202, "distance": 369 }, { "diameter": 1247, "distance": 282 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1333, "distance": 131 }, { "diameter": 1374, "distance": 64 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1025, "distance": 832 }, { "diameter": 1049, "distance": 742 }, { "diameter": 1072, "distance": 669 }, { "diameter": 1095, "distance": 606 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1140, "distance": 498 }, { "diameter": 1162, "distance": 451 }, { "diameter": 1183, "distance": 406 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1265, "distance": 250 }, { "diameter": 1304, "distance": 181 }, { "diameter": 1342, "distance": 117 }, { "diameter": 1379, "distance": 57 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1022, "distance": 841 }, { "diameter": 1044, "distance": 756 }, { "diameter": 1066, "distance": 687 }, { "diameter": 1087, "distance": 628 }, { "diameter": 1108, "distance": 575 }, { "diameter": 1128, "distance": 526 }, { "diameter": 1148, "distance": 481 }, { "diameter": 1168, "distance": 439 }, { "diameter": 1187, "distance": 399 }, { "diameter": 1206, "distance": 361 }, { "diameter": 1243, "distance": 290 }, { "diameter": 1279, "distance": 224 }, { "diameter": 1314, "distance": 163 }, { "diameter": 1348, "distance": 106 }, { "diameter": 1382, "distance": 52 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1021, "distance": 850 }, { "diameter": 1041, "distance": 769 }, { "diameter": 1061, "distance": 704 }, { "diameter": 1080, "distance": 647 }, { "diameter": 1099, "distance": 596 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1137, "distance": 507 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1173, "distance": 428 }, { "diameter": 1190, "distance": 392 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1258, "distance": 262 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1354, "distance": 97 }, { "diameter": 1384, "distance": 47 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1019, "distance": 857 }, { "diameter": 1038, "distance": 780 }, { "diameter": 1056, "distance": 718 }, { "diameter": 1074, "distance": 664 }, { "diameter": 1092, "distance": 615 }, { "diameter": 1110, "distance": 571 }, { "diameter": 1127, "distance": 530 }, { "diameter": 1143, "distance": 491 }, { "diameter": 1160, "distance": 454 }, { "diameter": 1177, "distance": 420 }, { "diameter": 1193, "distance": 387 }, { "diameter": 1209, "distance": 355 }, { "diameter": 1240, "distance": 295 }, { "diameter": 1271, "distance": 239 }, { "diameter": 1301, "distance": 186 }, { "diameter": 1330, "distance": 136 }, { "diameter": 1359, "distance": 89 }, { "diameter": 1387, "distance": 44 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1018, "distance": 864 }, { "diameter": 1035, "distance": 790 }, { "diameter": 1052, "distance": 730 }, { "diameter": 1069, "distance": 678 }, { "diameter": 1086, "distance": 632 }, { "diameter": 1102, "distance": 590 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1134, "distance": 513 }, { "diameter": 1150, "distance": 478 }, { "diameter": 1165, "distance": 444 }, { "diameter": 1180, "distance": 413 }, { "diameter": 1195, "distance": 382 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1254, "distance": 271 }, { "diameter": 1282, "distance": 220 }, { "diameter": 1309, "distance": 172 }, { "diameter": 1336, "distance": 126 }, { "diameter": 1363, "distance": 82 }, { "diameter": 1389, "distance": 40 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1017, "distance": 870 }, { "diameter": 1033, "distance": 799 }, { "diameter": 1049, "distance": 742 }, { "diameter": 1065, "distance": 692 }, { "diameter": 1080, "distance": 647 }, { "diameter": 1095, "distance": 606 }, { "diameter": 1110, "distance": 568 }, { "diameter": 1125, "distance": 532 }, { "diameter": 1140, "distance": 498 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1169, "distance": 436 }, { "diameter": 1183, "distance": 406 }, { "diameter": 1197, "distance": 378 }, { "diameter": 1211, "distance": 351 }, { "diameter": 1238, "distance": 299 }, { "diameter": 1265, "distance": 250 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1317, "distance": 159 }, { "diameter": 1342, "distance": 117 }, { "diameter": 1366, "distance": 77 }, { "diameter": 1390, "distance": 38 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1016, "distance": 875 }, { "diameter": 1031, "distance": 807 }, { "diameter": 1046, "distance": 752 }, { "diameter": 1061, "distance": 704 }, { "diameter": 1075, "distance": 660 }, { "diameter": 1090, "distance": 621 }, { "diameter": 1104, "distance": 584 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1132, "distance": 517 }, { "diameter": 1146, "distance": 486 }, { "diameter": 1159, "distance": 457 }, { "diameter": 1173, "distance": 428 }, { "diameter": 1186, "distance": 401 }, { "diameter": 1199, "distance": 375 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1250, "distance": 277 }, { "diameter": 1275, "distance": 232 }, { "diameter": 1299, "distance": 190 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1346, "distance": 109 }, { "diameter": 1369, "distance": 72 }, { "diameter": 1392, "distance": 35 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1015, "distance": 880 }, { "diameter": 1029, "distance": 814 }, { "diameter": 1043, "distance": 761 }, { "diameter": 1057, "distance": 714 }, { "diameter": 1071, "distance": 673 }, { "diameter": 1085, "distance": 635 }, { "diameter": 1098, "distance": 599 }, { "diameter": 1112, "distance": 566 }, { "diameter": 1125, "distance": 534 }, { "diameter": 1138, "distance": 505 }, { "diameter": 1151, "distance": 476 }, { "diameter": 1163, "distance": 448 }, { "diameter": 1176, "distance": 422 }, { "diameter": 1188, "distance": 396 }, { "diameter": 1200, "distance": 372 }, { "diameter": 1213, "distance": 348 }, { "diameter": 1237, "distance": 302 }, { "diameter": 1260, "distance": 258 }, { "diameter": 1283, "distance": 217 }, { "diameter": 1306, "distance": 177 }, { "diameter": 1328, "distance": 139 }, { "diameter": 1350, "distance": 103 }, { "diameter": 1372, "distance": 67 }, { "diameter": 1393, "distance": 33 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1014, "distance": 884 }, { "diameter": 1027, "distance": 820 }, { "diameter": 1041, "distance": 769 }, { "diameter": 1054, "distance": 724 }, { "diameter": 1067, "distance": 684 }, { "diameter": 1080, "distance": 647 }, { "diameter": 1093, "distance": 613 }, { "diameter": 1106, "distance": 580 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1131, "distance": 521 }, { "diameter": 1142, "distance": 493 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1167, "distance": 441 }, { "diameter": 1178, "distance": 416 }, { "diameter": 1190, "distance": 392 }, { "diameter": 1202, "distance": 369 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1247, "distance": 282 }, { "diameter": 1269, "distance": 242 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1312, "distance": 167 }, { "diameter": 1333, "distance": 131 }, { "diameter": 1354, "distance": 97 }, { "diameter": 1374, "distance": 64 }, { "diameter": 1394, "distance": 31 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1013, "distance": 888 }, { "diameter": 1026, "distance": 826 }, { "diameter": 1039, "distance": 777 }, { "diameter": 1051, "distance": 733 }, { "diameter": 1064, "distance": 694 }, { "diameter": 1076, "distance": 658 }, { "diameter": 1088, "distance": 625 }, { "diameter": 1100, "distance": 594 }, { "diameter": 1112, "distance": 564 }, { "diameter": 1124, "distance": 536 }, { "diameter": 1135, "distance": 509 }, { "diameter": 1147, "distance": 483 }, { "diameter": 1158, "distance": 458 }, { "diameter": 1170, "distance": 434 }, { "diameter": 1181, "distance": 411 }, { "diameter": 1192, "distance": 388 }, { "diameter": 1203, "distance": 367 }, { "diameter": 1214, "distance": 345 }, { "diameter": 1235, "distance": 304 }, { "diameter": 1256, "distance": 265 }, { "diameter": 1277, "distance": 228 }, { "diameter": 1298, "distance": 192 }, { "diameter": 1318, "distance": 157 }, { "diameter": 1338, "distance": 124 }, { "diameter": 1357, "distance": 91 }, { "diameter": 1376, "distance": 60 }, { "diameter": 1395, "distance": 30 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1012, "distance": 891 }, { "diameter": 1025, "distance": 832 }, { "diameter": 1037, "distance": 784 }, { "diameter": 1049, "distance": 742 }, { "diameter": 1061, "distance": 704 }, { "diameter": 1072, "distance": 669 }, { "diameter": 1084, "distance": 637 }, { "diameter": 1095, "distance": 606 }, { "diameter": 1107, "distance": 577 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1129, "distance": 524 }, { "diameter": 1140, "distance": 498 }, { "diameter": 1151, "distance": 474 }, { "diameter": 1162, "distance": 451 }, { "diameter": 1173, "distance": 428 }, { "diameter": 1183, "distance": 406 }, { "diameter": 1194, "distance": 385 }, { "diameter": 1204, "distance": 364 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1245, "distance": 286 }, { "diameter": 1265, "distance": 250 }, { "diameter": 1284, "distance": 215 }, { "diameter": 1304, "distance": 181 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1342, "distance": 117 }, { "diameter": 1360, "distance": 87 }, { "diameter": 1379, "distance": 57 }, { "diameter": 1396, "distance": 28 }, { "diameter": 1414, "distance": 0 }]]
-        } else {
-            DATA = [{}, [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1095, "distance": 606 }, { "diameter": 1183, "distance": 406 }, { "diameter": 1265, "distance": 250 }, { "diameter": 1342, "distance": 117 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1080, "distance": 647 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1354, "distance": 97 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1069, "distance": 678 }, { "diameter": 1134, "distance": 513 }, { "diameter": 1195, "distance": 382 }, { "diameter": 1254, "distance": 271 }, { "diameter": 1309, "distance": 172 }, { "diameter": 1363, "distance": 82 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1061, "distance": 704 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1173, "distance": 428 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1275, "distance": 232 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1369, "distance": 72 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1054, "distance": 724 }, { "diameter": 1106, "distance": 580 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1202, "distance": 369 }, { "diameter": 1247, "distance": 282 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1333, "distance": 131 }, { "diameter": 1374, "distance": 64 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1049, "distance": 742 }, { "diameter": 1095, "distance": 606 }, { "diameter": 1140, "distance": 498 }, { "diameter": 1183, "distance": 406 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1265, "distance": 250 }, { "diameter": 1304, "distance": 181 }, { "diameter": 1342, "distance": 117 }, { "diameter": 1379, "distance": 57 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1044, "distance": 756 }, { "diameter": 1087, "distance": 628 }, { "diameter": 1128, "distance": 526 }, { "diameter": 1168, "distance": 439 }, { "diameter": 1206, "distance": 361 }, { "diameter": 1243, "distance": 290 }, { "diameter": 1279, "distance": 224 }, { "diameter": 1314, "distance": 163 }, { "diameter": 1348, "distance": 106 }, { "diameter": 1382, "distance": 52 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1041, "distance": 769 }, { "diameter": 1080, "distance": 647 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1190, "distance": 392 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1258, "distance": 262 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1354, "distance": 97 }, { "diameter": 1384, "distance": 47 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1038, "distance": 780 }, { "diameter": 1074, "distance": 664 }, { "diameter": 1110, "distance": 571 }, { "diameter": 1143, "distance": 491 }, { "diameter": 1177, "distance": 420 }, { "diameter": 1209, "distance": 355 }, { "diameter": 1240, "distance": 295 }, { "diameter": 1271, "distance": 239 }, { "diameter": 1301, "distance": 186 }, { "diameter": 1330, "distance": 136 }, { "diameter": 1359, "distance": 89 }, { "diameter": 1387, "distance": 44 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1035, "distance": 790 }, { "diameter": 1069, "distance": 678 }, { "diameter": 1102, "distance": 590 }, { "diameter": 1134, "distance": 513 }, { "diameter": 1165, "distance": 444 }, { "diameter": 1195, "distance": 382 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1254, "distance": 271 }, { "diameter": 1282, "distance": 220 }, { "diameter": 1309, "distance": 172 }, { "diameter": 1336, "distance": 126 }, { "diameter": 1363, "distance": 82 }, { "diameter": 1389, "distance": 40 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1033, "distance": 799 }, { "diameter": 1065, "distance": 692 }, { "diameter": 1095, "distance": 606 }, { "diameter": 1125, "distance": 532 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1183, "distance": 406 }, { "diameter": 1211, "distance": 351 }, { "diameter": 1238, "distance": 299 }, { "diameter": 1265, "distance": 250 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1317, "distance": 159 }, { "diameter": 1342, "distance": 117 }, { "diameter": 1366, "distance": 77 }, { "diameter": 1390, "distance": 38 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1031, "distance": 807 }, { "diameter": 1061, "distance": 704 }, { "diameter": 1090, "distance": 621 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1146, "distance": 486 }, { "diameter": 1173, "distance": 428 }, { "diameter": 1199, "distance": 375 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1250, "distance": 277 }, { "diameter": 1275, "distance": 232 }, { "diameter": 1299, "distance": 190 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1346, "distance": 109 }, { "diameter": 1369, "distance": 72 }, { "diameter": 1392, "distance": 35 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1029, "distance": 814 }, { "diameter": 1057, "distance": 714 }, { "diameter": 1085, "distance": 635 }, { "diameter": 1112, "distance": 566 }, { "diameter": 1138, "distance": 505 }, { "diameter": 1163, "distance": 448 }, { "diameter": 1188, "distance": 396 }, { "diameter": 1213, "distance": 348 }, { "diameter": 1237, "distance": 302 }, { "diameter": 1260, "distance": 258 }, { "diameter": 1283, "distance": 217 }, { "diameter": 1306, "distance": 177 }, { "diameter": 1328, "distance": 139 }, { "diameter": 1350, "distance": 103 }, { "diameter": 1372, "distance": 67 }, { "diameter": 1393, "distance": 33 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1027, "distance": 820 }, { "diameter": 1054, "distance": 724 }, { "diameter": 1080, "distance": 647 }, { "diameter": 1106, "distance": 580 }, { "diameter": 1131, "distance": 521 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1178, "distance": 416 }, { "diameter": 1202, "distance": 369 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1247, "distance": 282 }, { "diameter": 1269, "distance": 242 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1312, "distance": 167 }, { "diameter": 1333, "distance": 131 }, { "diameter": 1354, "distance": 97 }, { "diameter": 1374, "distance": 64 }, { "diameter": 1394, "distance": 31 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1026, "distance": 826 }, { "diameter": 1051, "distance": 733 }, { "diameter": 1076, "distance": 658 }, { "diameter": 1100, "distance": 594 }, { "diameter": 1124, "distance": 536 }, { "diameter": 1147, "distance": 483 }, { "diameter": 1170, "distance": 434 }, { "diameter": 1192, "distance": 388 }, { "diameter": 1214, "distance": 345 }, { "diameter": 1235, "distance": 304 }, { "diameter": 1256, "distance": 265 }, { "diameter": 1277, "distance": 228 }, { "diameter": 1298, "distance": 192 }, { "diameter": 1318, "distance": 157 }, { "diameter": 1338, "distance": 124 }, { "diameter": 1357, "distance": 91 }, { "diameter": 1376, "distance": 60 }, { "diameter": 1395, "distance": 30 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1025, "distance": 832 }, { "diameter": 1049, "distance": 742 }, { "diameter": 1072, "distance": 669 }, { "diameter": 1095, "distance": 606 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1140, "distance": 498 }, { "diameter": 1162, "distance": 451 }, { "diameter": 1183, "distance": 406 }, { "diameter": 1204, "distance": 364 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1245, "distance": 286 }, { "diameter": 1265, "distance": 250 }, { "diameter": 1284, "distance": 215 }, { "diameter": 1304, "distance": 181 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1342, "distance": 117 }, { "diameter": 1360, "distance": 87 }, { "diameter": 1379, "distance": 57 }, { "diameter": 1396, "distance": 28 }, { "diameter": 1414, "distance": 0 }]]
-        }
+        let DATA = [{}, [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1095, "distance": 606 }, { "diameter": 1183, "distance": 406 }, { "diameter": 1265, "distance": 250 }, { "diameter": 1342, "distance": 117 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1080, "distance": 647 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1354, "distance": 97 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1069, "distance": 678 }, { "diameter": 1134, "distance": 513 }, { "diameter": 1195, "distance": 382 }, { "diameter": 1254, "distance": 271 }, { "diameter": 1309, "distance": 172 }, { "diameter": 1363, "distance": 82 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1061, "distance": 704 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1173, "distance": 428 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1275, "distance": 232 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1369, "distance": 72 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1054, "distance": 724 }, { "diameter": 1106, "distance": 580 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1202, "distance": 369 }, { "diameter": 1247, "distance": 282 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1333, "distance": 131 }, { "diameter": 1374, "distance": 64 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1049, "distance": 742 }, { "diameter": 1095, "distance": 606 }, { "diameter": 1140, "distance": 498 }, { "diameter": 1183, "distance": 406 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1265, "distance": 250 }, { "diameter": 1304, "distance": 181 }, { "diameter": 1342, "distance": 117 }, { "diameter": 1379, "distance": 57 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1044, "distance": 756 }, { "diameter": 1087, "distance": 628 }, { "diameter": 1128, "distance": 526 }, { "diameter": 1168, "distance": 439 }, { "diameter": 1206, "distance": 361 }, { "diameter": 1243, "distance": 290 }, { "diameter": 1279, "distance": 224 }, { "diameter": 1314, "distance": 163 }, { "diameter": 1348, "distance": 106 }, { "diameter": 1382, "distance": 52 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1041, "distance": 769 }, { "diameter": 1080, "distance": 647 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1190, "distance": 392 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1258, "distance": 262 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1354, "distance": 97 }, { "diameter": 1384, "distance": 47 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1038, "distance": 780 }, { "diameter": 1074, "distance": 664 }, { "diameter": 1110, "distance": 571 }, { "diameter": 1143, "distance": 491 }, { "diameter": 1177, "distance": 420 }, { "diameter": 1209, "distance": 355 }, { "diameter": 1240, "distance": 295 }, { "diameter": 1271, "distance": 239 }, { "diameter": 1301, "distance": 186 }, { "diameter": 1330, "distance": 136 }, { "diameter": 1359, "distance": 89 }, { "diameter": 1387, "distance": 44 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1035, "distance": 790 }, { "diameter": 1069, "distance": 678 }, { "diameter": 1102, "distance": 590 }, { "diameter": 1134, "distance": 513 }, { "diameter": 1165, "distance": 444 }, { "diameter": 1195, "distance": 382 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1254, "distance": 271 }, { "diameter": 1282, "distance": 220 }, { "diameter": 1309, "distance": 172 }, { "diameter": 1336, "distance": 126 }, { "diameter": 1363, "distance": 82 }, { "diameter": 1389, "distance": 40 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1033, "distance": 799 }, { "diameter": 1065, "distance": 692 }, { "diameter": 1095, "distance": 606 }, { "diameter": 1125, "distance": 532 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1183, "distance": 406 }, { "diameter": 1211, "distance": 351 }, { "diameter": 1238, "distance": 299 }, { "diameter": 1265, "distance": 250 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1317, "distance": 159 }, { "diameter": 1342, "distance": 117 }, { "diameter": 1366, "distance": 77 }, { "diameter": 1390, "distance": 38 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1031, "distance": 807 }, { "diameter": 1061, "distance": 704 }, { "diameter": 1090, "distance": 621 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1146, "distance": 486 }, { "diameter": 1173, "distance": 428 }, { "diameter": 1199, "distance": 375 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1250, "distance": 277 }, { "diameter": 1275, "distance": 232 }, { "diameter": 1299, "distance": 190 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1346, "distance": 109 }, { "diameter": 1369, "distance": 72 }, { "diameter": 1392, "distance": 35 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1029, "distance": 814 }, { "diameter": 1057, "distance": 714 }, { "diameter": 1085, "distance": 635 }, { "diameter": 1112, "distance": 566 }, { "diameter": 1138, "distance": 505 }, { "diameter": 1163, "distance": 448 }, { "diameter": 1188, "distance": 396 }, { "diameter": 1213, "distance": 348 }, { "diameter": 1237, "distance": 302 }, { "diameter": 1260, "distance": 258 }, { "diameter": 1283, "distance": 217 }, { "diameter": 1306, "distance": 177 }, { "diameter": 1328, "distance": 139 }, { "diameter": 1350, "distance": 103 }, { "diameter": 1372, "distance": 67 }, { "diameter": 1393, "distance": 33 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1027, "distance": 820 }, { "diameter": 1054, "distance": 724 }, { "diameter": 1080, "distance": 647 }, { "diameter": 1106, "distance": 580 }, { "diameter": 1131, "distance": 521 }, { "diameter": 1155, "distance": 467 }, { "diameter": 1178, "distance": 416 }, { "diameter": 1202, "distance": 369 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1247, "distance": 282 }, { "diameter": 1269, "distance": 242 }, { "diameter": 1291, "distance": 204 }, { "diameter": 1312, "distance": 167 }, { "diameter": 1333, "distance": 131 }, { "diameter": 1354, "distance": 97 }, { "diameter": 1374, "distance": 64 }, { "diameter": 1394, "distance": 31 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1026, "distance": 826 }, { "diameter": 1051, "distance": 733 }, { "diameter": 1076, "distance": 658 }, { "diameter": 1100, "distance": 594 }, { "diameter": 1124, "distance": 536 }, { "diameter": 1147, "distance": 483 }, { "diameter": 1170, "distance": 434 }, { "diameter": 1192, "distance": 388 }, { "diameter": 1214, "distance": 345 }, { "diameter": 1235, "distance": 304 }, { "diameter": 1256, "distance": 265 }, { "diameter": 1277, "distance": 228 }, { "diameter": 1298, "distance": 192 }, { "diameter": 1318, "distance": 157 }, { "diameter": 1338, "distance": 124 }, { "diameter": 1357, "distance": 91 }, { "diameter": 1376, "distance": 60 }, { "diameter": 1395, "distance": 30 }, { "diameter": 1414, "distance": 0 }], [{ "diameter": 1000, "distance": 1000 }, { "diameter": 1025, "distance": 832 }, { "diameter": 1049, "distance": 742 }, { "diameter": 1072, "distance": 669 }, { "diameter": 1095, "distance": 606 }, { "diameter": 1118, "distance": 550 }, { "diameter": 1140, "distance": 498 }, { "diameter": 1162, "distance": 451 }, { "diameter": 1183, "distance": 406 }, { "diameter": 1204, "distance": 364 }, { "diameter": 1225, "distance": 325 }, { "diameter": 1245, "distance": 286 }, { "diameter": 1265, "distance": 250 }, { "diameter": 1284, "distance": 215 }, { "diameter": 1304, "distance": 181 }, { "diameter": 1323, "distance": 149 }, { "diameter": 1342, "distance": 117 }, { "diameter": 1360, "distance": 87 }, { "diameter": 1379, "distance": 57 }, { "diameter": 1396, "distance": 28 }, { "diameter": 1414, "distance": 0 }]]
 
         /**
          * Convert distance between the circles (in DATA) into distance the left circle needs to be translated
@@ -380,13 +443,14 @@ function Ios({
 
 
         /**
-         * Get the data from DATA, move the left circle, change the diameters, reduce the left margin of left circle
+         * Move the left circle, change the diameters, reduce the left margin of left circle
          * @private
-         * @param circleNumber - the number of the circle we're treating (basically index - 1 in data)
+         * @param circleNumber - the number of the circle we're treating (index - 1 in data)
          */
         let shiftCircles = function (circleNumber) {
-            const diameter = Math.round(data[circleNumber - 1].diameter / scale)
-            const translate = Math.round(translateDistance(data[circleNumber - 1].distance) / scale)
+            const circleIndex = circleNumber - 1;
+            const diameter = Math.round(data[circleIndex].diameter / scale)
+            const translate = Math.round(translateDistance(data[circleIndex].distance) / scale)
             const shiftMargin = (diameter / 2 - startDiameter / 2);
 
             // move the left circle group
@@ -401,28 +465,37 @@ function Ios({
             rightGroup.style.marginLeft = `${newMargin}px`;
         }
 
-        const data = DATA[numberCircles - 1]
+        let data = DATA[numberCircles - 1]
+
+        if (extended === 'ios11-fixed-diameter') {
+            const originalRadius = 70;
+            const scalingFor1000Diameter = 1000 / (originalRadius * 2);
+            // the IOS11 is generated from an IOS13 to which we remove circles 6 and 8
+            // proportions taken from the IOS11 paper, 0 are the unused circles 6 and 8
+            const proportionDistances = [2.15, 1.89, 1.64, 1.45, 1.27, 0, 0.91, 0, 0.73, 0.58, 0.44, 0.33, 0.22];
+            data = proportionDistances.map(proportionDistance => ({ "diameter": originalRadius * 2 * scalingFor1000Diameter, "distance": originalRadius * proportionDistance * scalingFor1000Diameter }));
+        }
 
         if (type === 'original') {
 
             let distanceOverlapPictures = [];
 
             numberCirclesList.forEach((circle, i) => {
-                // find each pair of circle in the DOM and arrange them according to DATA
+                // find each pair of circle in the DOM and arrange them according to data
                 const iosID = 'ios-' + circle.toString()
                 const circleDiv = wrapper.querySelector(`[id="${iosID}"]`)
                 leftGroup = circleDiv.querySelector('.left-group')
                 rightGroup = circleDiv.querySelector('.right-group')
                 leftCircle = circleDiv.querySelector('.left-circle')
                 rightCircle = circleDiv.querySelector('.right-circle')
-                shiftCircles(i + 1)
+                shiftCircles(circle)
 
                 // get the distance and overlap and put it in a list
                 const reports = reportDistanceOverlap(leftCircle, rightCircle);
                 distanceOverlapPictures.push(reports)
             })
 
-            const ios_buttons = document.querySelectorAll('.ios-button')
+            const ios_buttons = wrapper.querySelectorAll('.ios-button')
             for (const iosButton of ios_buttons) {
                 iosButton.addEventListener(
                     'mousedown',
@@ -431,10 +504,11 @@ function Ios({
                             'mouseup',
                             () => {
                                 const value = iosButton.value;
-                                const pairNumber = numberCirclesList.indexOf(parseFloat(value));
-                                this.proportionDistance = distanceOverlapPictures[pairNumber].proportionDistance;
-                                this.proportionOverlap = distanceOverlapPictures[pairNumber].proportionOverlap;
+                                const circleIndex = numberCirclesList.indexOf(parseFloat(value));
+                                this.proportionDistance = distanceOverlapPictures[circleIndex].proportionDistance;
+                                this.proportionOverlap = distanceOverlapPictures[circleIndex].proportionOverlap;
                                 this.currentCircle = value;
+                                this.currentCircleRecoded = iosButton.getAttribute('value-recoded') ? iosButton.getAttribute('value-recoded') : value;
                             },
                             false)
                     }, false
@@ -457,7 +531,9 @@ function Ios({
                 this.proportionOverlap = reports.proportionOverlap;
                 this.proportionDistance = reports.proportionDistance;
                 // also report at which circle pair we're at
-                this.currentCircle = numberCirclesList[currentCircle - 1];
+                this.currentCircle = currentCircle;
+                const currentIndex = numberCirclesList.indexOf(currentCircle);
+                this.currentCircleRecoded = numberCirclesListOriginalWithHalves[currentIndex];
             }.bind(this)
 
 
@@ -466,8 +542,9 @@ function Ios({
              * @private
              */
             let nextCircle = function () {
-                if (currentCircle < numberCirclesList.length) {
-                    ++currentCircle;
+                if (currentCircle < numberCirclesList[numberCirclesList.length - 1]) {
+                    const currentIndex = numberCirclesList.indexOf(currentCircle);
+                    currentCircle = numberCirclesList[currentIndex + 1];
                     shiftAndReport();
                 }
             }
@@ -478,8 +555,9 @@ function Ios({
              * @private
              */
             let previousCircle = function () {
-                if (currentCircle > 1) {
-                    --currentCircle;
+                if (currentCircle > numberCirclesList[0]) {
+                    const currentIndex = numberCirclesList.indexOf(currentCircle);
+                    currentCircle = numberCirclesList[currentIndex - 1];
                     shiftAndReport();
                 }
             }
@@ -519,7 +597,9 @@ function Ios({
 
             // initialise
             let currentCircle = 1;
+            let currentCircleRecoded = 1;
             this.currentCircle = currentCircle;
+            this.currentCircleRecoded = currentCircleRecoded;
 
             // add the event listeners on the buttons
             nextButton.addEventListener('mousedown', nextCircle);
@@ -613,9 +693,5 @@ function Ios({
             lockAxis: 'x',
             onmove: onMove.bind(this),
         });
-    }
-
-    if (type !== 'continuous' && type !== 'step-choice' && type !== 'original') {
-        throw new Error("numberCircles needs to be 'continuous', 'step-choice', or 'original'")
     }
 }
