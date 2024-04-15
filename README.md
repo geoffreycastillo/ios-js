@@ -1,11 +1,32 @@
-# ios.js
+# `ios.js`
 
-A continuous implementation of the Inclusion of Other in the Self scale.
-We also offer the original IOS scale and a middle-ground, the Step-choice IOS scale.
+A JavaScript implementation of the Inclusion of Other in the Self (IOS) scale *that satisfies its original design features*.
+
+`ios.js` offers three versions:
+- Continuous IOS scale: fully continuous IOS scale
+
+![Continuous IOS gif](demo/continuous-ios.gif)
+
+- Step-choice IOS scale: discrete IOS scale that allows for many circles via back-and-forth buttons
+
+![Step-choice IOS gif](demo/step-choice-ios.gif)
+
+- Standard IOS scale
+
+![Standard IOS gif](demo/standard-ios.gif)
+
+Number of pairs of circles, circle sizes, and labels (among other options) can be easily customised.
+We also offer [extended versions of the discrete IOS scales](https://github.com/geoffreycastillo/ios-js/wiki/Extended-IOS-scales) that add intermediate circles.
 
 ## Demo
 
 https://geoffreycastillo.com/ios-js-demo/
+
+## Paper
+
+We present `ios.js`, and in particular the Continuous IOS scale, in more details in our paper: [Beranek and Castillo (2022) Continuous Inclusion of Other in the Self](https://geoffreycastillo.com/pdf/Beranek,Castillo-Continuous-Inclusion-of-Other-in-the-Self.pdf).
+
+If you use `ios.js`, please cite it!
 
 ## Installation
 
@@ -73,6 +94,12 @@ Proportion distance: <span id="continuous-ios-distance"></span>
 </script>
 ```
 
+## Qualtrics? oTree?
+
+See the wiki for instructions on [how to use `ios.js` with Qualtrics](https://github.com/geoffreycastillo/ios-js/wiki/Qualtrics).
+
+For oTree, we have a [separate demo app](https://github.com/geoffreycastillo/ios_js_otree_demo).
+
 ## Other examples
 
 For the Step-Choice IOS scale with 10 pairs of cirles:
@@ -100,19 +127,10 @@ const iosPictorial = new Ios({
 });
 ```
 
-## Qualtrics? oTree?
-
-See the wiki for instructions on [how to use `ios.js` with Qualtrics](https://github.com/geoffreycastillo/ios-js/wiki/Qualtrics).
-
-For oTree, we have a [separate demo app](https://github.com/geoffreycastillo/ios_js_otree_demo).
 
 ## Documentation
 
-See the [wiki](https://github.com/geoffreycastillo/ios-js/wiki) for the API documentation and for some specific Qualtrics advice.
-
-## Citation
-
-If you use `ios.js`, please cite our paper: [Beranek and Castillo (2022) Continuous Inclusion of Other in the Self](https://geoffreycastillo.com/pdf/Beranek,Castillo-Continuous-Inclusion-of-Other-in-the-Self.pdf)
+See the [wiki](https://github.com/geoffreycastillo/ios-js/wiki) for the [API documentation](https://github.com/geoffreycastillo/ios-js/wiki/API-Documentation).
 
 ## Bugs? Suggestions?
 
