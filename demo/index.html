@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="Geoffrey Castillo" name="author">
+    <meta content="" name="description">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Example of ios.js</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <style>
+        .ios-button {
+            border: none;
+        }
+    </style>
+</head>
+
+
+<body>
+
+<div class="col-lg-8 mx-auto p-3 py-md-5">
+
+    <main>
+
+
+        <h1 class="display-1"><code>ios.js</code></h1>
+
+        <h3>Continuous IOS</h3>
+
+        <div id="ios-continuous"></div>
+
+        <p>
+            Proportion overlap: <span id="continuous-ios-overlap"></span>
+        </p>
+        <p>
+            Proportion distance: <span id="continuous-ios-distance"></span>
+        </p>
+
+
+        <h3>Original IOS 7 circles</h3>
+
+        <div id="ios-original"></div>
+
+        <p>
+            IOS score: <span id="original-ios-score"></span>
+        </p>
+        <p>
+            IOS score recoded: <span id="original-ios-score-recoded"></span>
+        </p>
+        <p>
+            Proportion overlap: <span id="original-ios-overlap"></span>
+        </p>
+        <p>
+            Proportion distance: <span id="original-ios-distance"></span>
+        </p>
+
+        <h3>Original IOS 10 circles</h3>
+
+        <div id="ios-original10"></div>
+
+        <p>
+            IOS score: <span id="original-ios10-score"></span>
+        </p>
+        <p>
+            IOS score recoded: <span id="original-ios10-score-recoded"></span>
+        </p>
+        <p>
+            Proportion overlap: <span id="original-ios10-overlap"></span>
+        </p>
+        <p>
+            Proportion distance: <span id="original-ios10-distance"></span>
+        </p>
+
+        <h3>Original IOS 7 circles unbalanced</h3>
+
+        <div id="ios-original-unbalanced"></div>
+
+        <p>
+            IOS score: <span id="original-ios-unbalanced-score"></span>
+        </p>
+        <p>
+            IOS score recoded: <span id="original-ios-unbalanced-score-recoded"></span>
+        </p>
+        <p>
+            Proportion overlap: <span id="original-ios-unbalanced-overlap"></span>
+        </p>
+        <p>
+            Proportion distance: <span id="original-ios-unbalanced-distance"></span>
+        </p>
+
+        <h3>Original IOS 7 circles IOS11</h3>
+
+        <div id="ios-original11"></div>
+
+        <p>
+            IOS score: <span id="original-ios11-score"></span>
+        </p>
+        <p>
+            IOS score recoded: <span id="original-ios11-score-recoded"></span>
+        </p>
+        <p>
+            Proportion overlap: <span id="original-ios11-overlap"></span>
+        </p>
+        <p>
+            Proportion distance: <span id="original-ios11-distance"></span>
+        </p>
+
+        <h3>Step-choice IOS 7 circles</h3>
+
+        <div id="ios-step-choice"></div>
+
+        <p>
+            IOS score: <span id="step-ios-score"></span>
+        </p>
+        <p>
+            IOS score recoded: <span id="step-ios-score-recoded"></span>
+        </p>
+        <p>
+            Proportion overlap: <span id="step-ios-overlap"></span>
+        </p>
+        <p>
+            Proportion distance: <span id="step-ios-distance"></span>
+        </p>
+
+        <h3>Step-choice IOS 10 circles</h3>
+
+        <div id="ios-step-choice10"></div>
+
+        <p>
+            IOS score: <span id="step-ios10-score"></span>
+        </p>
+        <p>
+            IOS score recoded: <span id="step-ios10-score-recoded"></span>
+        </p>
+        <p>
+            Proportion overlap: <span id="step-ios10-overlap"></span>
+        </p>
+        <p>
+            Proportion distance: <span id="step-ios10-distance"></span>
+        </p>
+
+        <h3>Step-choice IOS 7 circles unbalanced</h3>
+
+        <div id="ios-step-choice-unbalanced"></div>
+
+        <p>
+            IOS score: <span id="step-ios-unbalanced-score"></span>
+        </p>
+        <p>
+            IOS score recoded: <span id="step-ios-unbalanced-score-recoded"></span>
+        </p>
+        <p>
+            Proportion overlap: <span id="step-ios-unbalanced-overlap"></span>
+        </p>
+        <p>
+            Proportion distance: <span id="step-ios-unbalanced-distance"></span>
+        </p>
+
+        <h3>Step-choice IOS 7 circles IOS11</h3>
+
+        <div id="ios-step-choice11"></div>
+
+        <p>
+            IOS score: <span id="step-ios11-score"></span>
+        </p>
+        <p>
+            IOS score recoded: <span id="step-ios11-score-recoded"></span>
+        </p>
+        <p>
+            Proportion overlap: <span id="step-ios11-overlap"></span>
+        </p>
+        <p>
+            Proportion distance: <span id="step-ios11-distance"></span>
+        </p>
+
+        <h3>IOS11</h3>
+
+        <div id="ios11"></div>
+
+        <p>
+            IOS score: <span id="ios11-score"></span>
+        </p>
+        <p>
+            IOS score recoded: <span id="ios11-score-recoded"></span>
+        </p>
+        <p>
+            Proportion overlap: <span id="ios11-overlap"></span>
+        </p>
+        <p>
+            Proportion distance: <span id="ios11-distance"></span>
+        </p>
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.17/dist/interact.min.js"></script>
+    <script src="../ios.js"></script>
+
+
+    <script>
+
+const iosContinuous = new Ios({
+            el: 'ios-continuous'
+        });
+
+        const continuous_ios_distance_input = document.getElementById('continuous-ios-distance');
+        const continuous_ios_overlap_input = document.getElementById('continuous-ios-overlap');
+        {
+            {/*  const ios_buttons = document.querySelectorAll('.ios-button')  */
+            }
+        }
+
+        document.getElementById('ios-continuous').addEventListener(
+            'mousedown',
+            () => {
+                window.addEventListener(
+                    'mouseup',
+                    () => {
+                        continuous_ios_distance_input.innerHTML = iosContinuous.proportionDistance;
+                        continuous_ios_overlap_input.innerHTML = iosContinuous.proportionOverlap;
+                    },
+                    false)
+            }, false
+        );
+            
+        const iosOriginal = new Ios({
+            el: 'ios-original',
+            type: 'original',
+            numberCircles: 7,
+            direction: 'row',
+            buttonsClass: 'btn btn-outline-secondary',
+        });
+
+        const original_ios_distance_input = document.getElementById('original-ios-distance');
+        const original_ios_overlap_input = document.getElementById('original-ios-overlap');
+        const original_ios_score_input = document.getElementById('original-ios-score');
+        const original_ios_score_recoded_input = document.getElementById('original-ios-score-recoded');
+
+        document.getElementById('ios-original').addEventListener(
+            'mousedown',
+            () => {
+                window.addEventListener(
+                    'mouseup',
+                    () => {
+                        original_ios_distance_input.innerHTML = iosOriginal.proportionDistance;
+                        original_ios_overlap_input.innerHTML = iosOriginal.proportionOverlap;
+                        original_ios_score_input.innerHTML = iosOriginal.currentCircle;
+                        original_ios_score_recoded_input.innerHTML = iosOriginal.currentCircleRecoded;
+                    },
+                    false)
+            }, false
+        );
+
+        const iosOriginal10 = new Ios({
+            el: 'ios-original10',
+            type: 'original',
+            numberCircles: 10,
+            direction: 'row',
+            buttonsClass: 'btn btn-outline-secondary',
+        });
+
+        const original_ios10_distance_input = document.getElementById('original-ios10-distance');
+        const original_ios10_overlap_input = document.getElementById('original-ios10-overlap');
+        const original_ios10_score_input = document.getElementById('original-ios10-score');
+        const original_ios10_score_recoded_input = document.getElementById('original-ios10-score-recoded');
+
+        document.getElementById('ios-original10').addEventListener(
+            'mousedown',
+            () => {
+                window.addEventListener(
+                    'mouseup',
+                    () => {
+                        original_ios10_distance_input.innerHTML = iosOriginal10.proportionDistance;
+                        original_ios10_overlap_input.innerHTML = iosOriginal10.proportionOverlap;
+                        original_ios10_score_input.innerHTML = iosOriginal10.currentCircle;
+                        original_ios10_score_recoded_input.innerHTML = iosOriginal10.currentCircleRecoded;
+                    },
+                    false)
+            }, false
+        );
+
+        const iosOriginalUnbalanced = new Ios({
+            el: 'ios-original-unbalanced',
+            type: 'original',
+            numberCircles: 7,
+            buttonsClass: 'btn btn-outline-secondary',
+            direction: 'row',
+            extended: 'unbalanced'
+        });
+
+        const original_ios_unbalanced_distance_input = document.getElementById('original-ios-unbalanced-distance');
+        const original_ios_unbalanced_overlap_input = document.getElementById('original-ios-unbalanced-overlap');
+        const original_ios_unbalanced_score_input = document.getElementById('original-ios-unbalanced-score');
+        const original_ios_unbalanced_score_recoded_input = document.getElementById('original-ios-unbalanced-score-recoded');
+
+        document.getElementById('ios-original-unbalanced').addEventListener(
+            'mousedown',
+            () => {
+                window.addEventListener(
+                    'mouseup',
+                    () => {
+                        original_ios_unbalanced_distance_input.innerHTML = iosOriginalUnbalanced.proportionDistance;
+                        original_ios_unbalanced_overlap_input.innerHTML = iosOriginalUnbalanced.proportionOverlap;
+                        original_ios_unbalanced_score_input.innerHTML = iosOriginalUnbalanced.currentCircle;
+                        original_ios_unbalanced_score_recoded_input.innerHTML = iosOriginalUnbalanced.currentCircleRecoded;
+                    },
+                    false)
+            }, false
+        );
+
+        const iosOriginal11 = new Ios({
+            el: 'ios-original11',
+            type: 'original',
+            numberCircles: 7,
+            buttonsClass: 'btn btn-outline-secondary',
+            direction: 'row',
+            extended: 'ios11'
+        });
+
+        const original_ios11_distance_input = document.getElementById('original-ios11-distance');
+        const original_ios11_overlap_input = document.getElementById('original-ios11-overlap');
+        const original_ios11_score_input = document.getElementById('original-ios11-score');
+        const original_ios11_score_recoded_input = document.getElementById('original-ios11-score-recoded');
+
+        document.getElementById('ios-original11').addEventListener(
+            'mousedown',
+            () => {
+            window.addEventListener(
+                'mouseup',
+                () => {
+                original_ios11_distance_input.innerHTML = iosOriginal11.proportionDistance;
+                original_ios11_overlap_input.innerHTML = iosOriginal11.proportionOverlap;
+                original_ios11_score_input.innerHTML = iosOriginal11.currentCircle;
+                original_ios11_score_recoded_input.innerHTML = iosOriginal11.currentCircleRecoded;
+                },
+                false)
+            }, false
+        );
+
+        const iosStepChoice = new Ios({
+            el: 'ios-step-choice',
+            type: 'step-choice',
+            numberCircles: 7,
+            buttonsClass: 'btn btn-outline-secondary',
+            direction: 'row',
+        });
+
+        const step_ios_distance_input = document.getElementById('step-ios-distance');
+        const step_ios_overlap_input = document.getElementById('step-ios-overlap');
+        const step_ios_score_input = document.getElementById('step-ios-score');
+        const step_ios_score_recoded_input = document.getElementById('step-ios-score-recoded');
+
+        document.getElementById('ios-step-choice').addEventListener(
+            'mousedown',
+            () => {
+                window.addEventListener(
+                    'mouseup',
+                    () => {
+                        step_ios_distance_input.innerHTML = iosStepChoice.proportionDistance;
+                        step_ios_overlap_input.innerHTML = iosStepChoice.proportionOverlap;
+                        step_ios_score_input.innerHTML = iosStepChoice.currentCircle;
+                        step_ios_score_recoded_input.innerHTML = iosStepChoice.currentCircleRecoded;
+                    },
+                    false)
+            }, false
+        );
+
+        const iosStepChoice10 = new Ios({
+            el: 'ios-step-choice10',
+            type: 'step-choice',
+            numberCircles: 10,
+            buttonsClass: 'btn btn-outline-secondary',
+            direction: 'row',
+        });
+
+        const step_ios10_distance_input = document.getElementById('step-ios10-distance');
+        const step_ios10_overlap_input = document.getElementById('step-ios10-overlap');
+        const step_ios10_score_input = document.getElementById('step-ios10-score');
+        const step_ios10_score_recoded_input = document.getElementById('step-ios10-score-recoded');
+
+        document.getElementById('ios-step-choice10').addEventListener(
+            'mousedown',
+            () => {
+                window.addEventListener(
+                    'mouseup',
+                    () => {
+                        step_ios10_distance_input.innerHTML = iosStepChoice10.proportionDistance;
+                        step_ios10_overlap_input.innerHTML = iosStepChoice10.proportionOverlap;
+                        step_ios10_score_input.innerHTML = iosStepChoice10.currentCircle;
+                        step_ios10_score_recoded_input.innerHTML = iosStepChoice10.currentCircleRecoded;
+                    },
+                    false)
+            }, false
+        );
+
+        const iosStepChoiceUnbalanced = new Ios({
+            el: 'ios-step-choice-unbalanced',
+            type: 'step-choice',
+            numberCircles: 7,
+            buttonsClass: 'btn btn-outline-secondary',
+            direction: 'row',
+            extended: 'unbalanced'
+        });
+
+        const step_ios_unbalanced_distance_input = document.getElementById('step-ios-unbalanced-distance');
+        const step_ios_unbalanced_overlap_input = document.getElementById('step-ios-unbalanced-overlap');
+        const step_ios_unbalanced_score_input = document.getElementById('step-ios-unbalanced-score');
+        const step_ios_unbalanced_score_recoded_input = document.getElementById('step-ios-unbalanced-score-recoded');
+
+        document.getElementById('ios-step-choice-unbalanced').addEventListener(
+            'mousedown',
+            () => {
+                window.addEventListener(
+                    'mouseup',
+                    () => {
+                        step_ios_unbalanced_distance_input.innerHTML = iosStepChoiceUnbalanced.proportionDistance;
+                        step_ios_unbalanced_overlap_input.innerHTML = iosStepChoiceUnbalanced.proportionOverlap;
+                        step_ios_unbalanced_score_input.innerHTML = iosStepChoiceUnbalanced.currentCircle;
+                        step_ios_unbalanced_score_recoded_input.innerHTML = iosStepChoiceUnbalanced.currentCircleRecoded;
+                    },
+                    false)
+            }, false
+        );
+
+        const iosStepChoice11 = new Ios({
+            el: 'ios-step-choice11',
+            type: 'step-choice',
+            numberCircles: 7,
+            buttonsClass: 'btn btn-outline-secondary',
+            direction: 'row',
+            extended: 'ios11'
+        });
+
+        const step_ios11_distance_input = document.getElementById('step-ios11-distance');
+        const step_ios11_overlap_input = document.getElementById('step-ios11-overlap');
+        const step_ios11_score_input = document.getElementById('step-ios11-score');
+        const step_ios11_score_recoded_input = document.getElementById('step-ios11-score-recoded');
+
+        document.getElementById('ios-step-choice11').addEventListener(
+            'mousedown',
+            () => {
+                window.addEventListener(
+                    'mouseup',
+                    () => {
+                        step_ios11_distance_input.innerHTML = iosStepChoice11.proportionDistance;
+                        step_ios11_overlap_input.innerHTML = iosStepChoice11.proportionOverlap;
+                        step_ios11_score_input.innerHTML = iosStepChoice11.currentCircle;
+                        step_ios11_score_recoded_input.innerHTML = iosStepChoice11.currentCircleRecoded;
+                    },
+                    false)
+            }, false
+        );
+
+        const ios11 = new Ios({
+            el: 'ios11',
+            type: 'step-choice',
+            numberCircles: 7,
+            buttonsClass: 'btn btn-outline-secondary',
+            direction: 'row',
+            extended: 'ios11-fixed-diameter'
+        });
+
+        const ios11_distance_input = document.getElementById('ios11-distance');
+        const ios11_overlap_input = document.getElementById('ios11-overlap');
+        const ios11_score_input = document.getElementById('ios11-score');
+        const ios11_score_recoded_input = document.getElementById('ios11-score-recoded');
+
+        document.getElementById('ios11').addEventListener(
+            'mousedown',
+            () => {
+                window.addEventListener(
+                    'mouseup',
+                    () => {
+                        ios11_distance_input.innerHTML = ios11.proportionDistance;
+                        ios11_overlap_input.innerHTML = ios11.proportionOverlap;
+                        ios11_score_input.innerHTML = ios11.currentCircle;
+                        ios11_score_recoded_input.innerHTML = ios11.currentCircleRecoded;
+                    },
+                    false)
+            }, false
+        );
+
+    </script>
+
+</div>
+
+</body>
+
+</html>
