@@ -18,7 +18,8 @@
  * @property {number} distance - Distance in pixels between the circles
  * @property {number} proportionOverlap - Proportion of overlap, between 0 (no overlap) and 1 (full overlap)
  * @property {number} proportionDistance - Proportion of distance, between 0 (no overlap) and 1 (full overlap)
- * @property {number} currentCircle - Current circle pair, between 1 and numberCircles (original and Step-choice only)
+ * @property {number} currentCircle - Current circle pair, between 1 and numberCircles (original and Step-choice only), or between 1 and 2 * numberCircles - 1 (extended versions)
+ * @property {number} currentCircleRecoded - Current circle pair, between 1 and numberCircles (original and Step-choice only). In the case of extended versions, some value will be 1.5, 2.5 etc.
  */
 function Ios({
     el,
