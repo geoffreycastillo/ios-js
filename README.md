@@ -16,7 +16,7 @@ A JavaScript implementation of the Inclusion of Other in the Self (IOS) scale *t
 ![Standard IOS gif](demo/standard-ios.gif)
 
 Number of pairs of circles, circle sizes, and labels (among other options) can be easily customised.
-We also offer [extended versions of the discrete IOS scales](https://github.com/geoffreycastillo/ios-js/wiki/Extended-IOS-scales) that add intermediate circles.
+We also offer [extended versions of the discrete IOS scales](https://github.com/geoffreycastillo/ios-js/wiki/Extended-IOS-scales) (unbalanced or inspired by [IOS11](https://www.nottingham.ac.uk/cedex/news/papers/2023-10.aspx)) that add intermediate circles.
 
 ## Demo
 
