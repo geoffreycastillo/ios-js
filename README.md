@@ -57,7 +57,7 @@ For example, to use `0.2.0`:
 <script src="https://cdn.jsdelivr.net/gh/geoffreycastillo/ios-js@0.2.0/ios.min.js"></script>
 ```
 
-Otherwise, you will use the last version and run the risk that I push a new version while your experiment is running, which could break something.
+Otherwise, you will use the latest version and run the risk that I push a new version while your experiment is running, which could break something.
 
 ## Quick start
 
@@ -119,10 +119,10 @@ For the original IOS scale:
 
 ```
 # html
-<div id="ios-pictorial"></div>
+<div id="ios-original"></div>
 # js
 const iosPictorial = new Ios({
-    el: 'ios-pictorial',
+    el: 'ios-original',
     type: 'original'
 });
 ```
