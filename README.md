@@ -16,7 +16,10 @@ A JavaScript implementation of the Inclusion of Other in the Self (IOS) scale *t
 ![Standard IOS gif](demo/standard-ios.gif)
 
 Number of pairs of circles, circle sizes, and labels (among other options) can be easily customised.
-We also offer [extended versions of the discrete IOS scales](https://github.com/geoffreycastillo/ios-js/wiki/Extended-IOS-scales) (unbalanced or inspired by [IOS11](https://www.nottingham.ac.uk/cedex/news/papers/2023-10.aspx)) that add intermediate circles.
+
+We also offer [extended versions of the discrete IOS scales](https://github.com/geoffreycastillo/ios-js/wiki/Extended-IOS-scales) that add intermediate circles.
+These versions are useful when one expects IOS scores to be concentrated at the lower-end of the scale.
+As we explain on that link, they also allow to replicate [IOS11](https://www.nature.com/articles/s41598-024-58042-6).
 
 ## Demo
 
@@ -24,7 +27,7 @@ https://geoffreycastillo.com/ios-js-demo/
 
 ## Paper
 
-We present `ios.js`, and in particular the Continuous IOS scale, in more details in our paper: [Beranek and Castillo (2022) Continuous Inclusion of Other in the Self](https://geoffreycastillo.com/pdf/Beranek,Castillo-Continuous-Inclusion-of-Other-in-the-Self.pdf).
+We present `ios.js`, and in particular the Continuous IOS scale, in more details in our (open-access) paper: [Beranek and Castillo (2022) Continuous Inclusion of Other in the Self](https://doi.org/10.1007/s40881-024-00176-4).
 
 If you use `ios.js`, please cite it!
 
