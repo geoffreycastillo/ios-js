@@ -9,8 +9,8 @@
  * @param {('unbalanced'|'ios11'|'ios11-fixed-diameter')} [options.extended = false] - Whether to include intermediate circles in the first half (for 'unbalanced') or in the first and last third (for 'ios11') (original and Step-choice only). If 'ios11-fixed-diameter', the circles will have a fixed diameter, and the number of circles has to be 11.
  * @param {boolean} [options.unbalanced = false] - If true, there are twice as many circles in the first half (original and Step-choice only)
  * @param {boolean} [options.ios11 = false] - If true, there are twice as many circles in the first and last third, inspired by IOS11 (original and Step-choice only)
- * @param {string} [options.you = 'You'] - String for the left circle
- * @param {string} [options.other = 'Other'] - String for the right circle
+ * @param {string} [options.children = 'Children'] - String for the left circle
+ * @param {string} [options.parents = 'Parents'] - String for the right circle
  * @param {string} [options.buttonsClass = ''] - Additional class to pass to the buttons: circles if using original IOS, arrows if using Step-choice IOS
  * @param {('column' | 'row')} [options.direction = 'column'] - Arrangement of the buttons, if using original IOS
  * @param {number} [options.leftTextWidth = 40] - Size reserved for string of left circle, needs to be adjusted manually until the initial pair of circles has no overlap
@@ -27,8 +27,8 @@ function Ios({
     numberCircles = 7,
     circleDiameter = 100,
     extended = false,
-    you = 'You',
-    other = 'Other',
+    children = 'Children',
+    parents = 'Parents',
     buttonsClass = '',
     direction = 'column',
     leftTextWidth = 40,
