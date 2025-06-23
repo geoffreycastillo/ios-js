@@ -138,7 +138,7 @@ See the [wiki](https://github.com/geoffreycastillo/ios-js/wiki) for the [API doc
 ## Bugs? Suggestions?
 
 [Open an issue](https://github.com/geoffreycastillo/ios-js/issues) or a [pull request](https://github.com/geoffreycastillo/ios-js/pulls), or email me
-at [`geoffrey.castillo@univie.ac.at`](mailto:geoffrey.castillo@univie.ac.at).
+at [`geoffrey.castillo@ntu.ac.uk`](mailto:geoffrey.castillo@ntu.ac.uk).
 
 ## Licence
 
