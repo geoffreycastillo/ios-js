@@ -210,16 +210,12 @@ const iosContinuous = new Ios({
 
         const continuous_ios_distance_input = document.getElementById('continuous-ios-distance');
         const continuous_ios_overlap_input = document.getElementById('continuous-ios-overlap');
-        {
-            {/*  const ios_buttons = document.querySelectorAll('.ios-button')  */
-            }
-        }
 
         document.getElementById('ios-continuous').addEventListener(
-            'mousedown',
+            'pointerdown',
             () => {
                 window.addEventListener(
-                    'mouseup',
+                    'pointerup',
                     () => {
                         continuous_ios_distance_input.innerHTML = iosContinuous.proportionDistance;
                         continuous_ios_overlap_input.innerHTML = iosContinuous.proportionOverlap;
@@ -242,10 +238,10 @@ const iosContinuous = new Ios({
         const original_ios_score_recoded_input = document.getElementById('original-ios-score-recoded');
 
         document.getElementById('ios-original').addEventListener(
-            'mousedown',
+            'pointerdown',
             () => {
                 window.addEventListener(
-                    'mouseup',
+                    'pointerup',
                     () => {
                         original_ios_distance_input.innerHTML = iosOriginal.proportionDistance;
                         original_ios_overlap_input.innerHTML = iosOriginal.proportionOverlap;
@@ -270,10 +266,10 @@ const iosContinuous = new Ios({
         const original_ios10_score_recoded_input = document.getElementById('original-ios10-score-recoded');
 
         document.getElementById('ios-original10').addEventListener(
-            'mousedown',
+            'pointerdown',
             () => {
                 window.addEventListener(
-                    'mouseup',
+                    'pointerup',
                     () => {
                         original_ios10_distance_input.innerHTML = iosOriginal10.proportionDistance;
                         original_ios10_overlap_input.innerHTML = iosOriginal10.proportionOverlap;
@@ -299,10 +295,10 @@ const iosContinuous = new Ios({
         const original_ios_unbalanced_score_recoded_input = document.getElementById('original-ios-unbalanced-score-recoded');
 
         document.getElementById('ios-original-unbalanced').addEventListener(
-            'mousedown',
+            'pointerdown',
             () => {
                 window.addEventListener(
-                    'mouseup',
+                    'pointerup',
                     () => {
                         original_ios_unbalanced_distance_input.innerHTML = iosOriginalUnbalanced.proportionDistance;
                         original_ios_unbalanced_overlap_input.innerHTML = iosOriginalUnbalanced.proportionOverlap;
@@ -328,10 +324,10 @@ const iosContinuous = new Ios({
         const original_ios11_score_recoded_input = document.getElementById('original-ios11-score-recoded');
 
         document.getElementById('ios-original11').addEventListener(
-            'mousedown',
+            'pointerdown',
             () => {
             window.addEventListener(
-                'mouseup',
+                'pointerup',
                 () => {
                 original_ios11_distance_input.innerHTML = iosOriginal11.proportionDistance;
                 original_ios11_overlap_input.innerHTML = iosOriginal11.proportionOverlap;
@@ -356,10 +352,10 @@ const iosContinuous = new Ios({
         const step_ios_score_recoded_input = document.getElementById('step-ios-score-recoded');
 
         document.getElementById('ios-step-choice').addEventListener(
-            'mousedown',
+            'pointerdown',
             () => {
                 window.addEventListener(
-                    'mouseup',
+                    'pointerup',
                     () => {
                         step_ios_distance_input.innerHTML = iosStepChoice.proportionDistance;
                         step_ios_overlap_input.innerHTML = iosStepChoice.proportionOverlap;
@@ -384,10 +380,10 @@ const iosContinuous = new Ios({
         const step_ios10_score_recoded_input = document.getElementById('step-ios10-score-recoded');
 
         document.getElementById('ios-step-choice10').addEventListener(
-            'mousedown',
+            'pointerdown',
             () => {
                 window.addEventListener(
-                    'mouseup',
+                    'pointerup',
                     () => {
                         step_ios10_distance_input.innerHTML = iosStepChoice10.proportionDistance;
                         step_ios10_overlap_input.innerHTML = iosStepChoice10.proportionOverlap;
@@ -413,10 +409,10 @@ const iosContinuous = new Ios({
         const step_ios_unbalanced_score_recoded_input = document.getElementById('step-ios-unbalanced-score-recoded');
 
         document.getElementById('ios-step-choice-unbalanced').addEventListener(
-            'mousedown',
+            'pointerdown',
             () => {
                 window.addEventListener(
-                    'mouseup',
+                    'pointerup',
                     () => {
                         step_ios_unbalanced_distance_input.innerHTML = iosStepChoiceUnbalanced.proportionDistance;
                         step_ios_unbalanced_overlap_input.innerHTML = iosStepChoiceUnbalanced.proportionOverlap;
@@ -442,10 +438,10 @@ const iosContinuous = new Ios({
         const step_ios11_score_recoded_input = document.getElementById('step-ios11-score-recoded');
 
         document.getElementById('ios-step-choice11').addEventListener(
-            'mousedown',
+            'pointerdown',
             () => {
                 window.addEventListener(
-                    'mouseup',
+                    'pointerup',
                     () => {
                         step_ios11_distance_input.innerHTML = iosStepChoice11.proportionDistance;
                         step_ios11_overlap_input.innerHTML = iosStepChoice11.proportionOverlap;
@@ -471,10 +467,10 @@ const iosContinuous = new Ios({
         const ios11_score_recoded_input = document.getElementById('ios11-score-recoded');
 
         document.getElementById('ios11').addEventListener(
-            'mousedown',
+            'pointerdown',
             () => {
                 window.addEventListener(
-                    'mouseup',
+                    'pointerup',
                     () => {
                         ios11_distance_input.innerHTML = ios11.proportionDistance;
                         ios11_overlap_input.innerHTML = ios11.proportionOverlap;
