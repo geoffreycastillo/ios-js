@@ -27,7 +27,7 @@ https://geoffreycastillo.com/ios-js-demo/
 
 ## Paper
 
-We present `ios.js`, and in particular the Continuous IOS scale, in more details in our (open-access) paper: [Beranek and Castillo (2022) Continuous Inclusion of Other in the Self](https://doi.org/10.1007/s40881-024-00176-4).
+We present `ios.js`, and in particular the Continuous IOS scale, in more details in our (open-access) paper: [Beranek and Castillo (2025) Continuous Inclusion of Other in the Self](https://doi.org/10.1007/s40881-024-00176-4).
 
 If you use `ios.js`, please cite it!
 
